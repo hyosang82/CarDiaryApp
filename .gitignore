@@ -1,0 +1,9 @@
+.gradle/
+.idea/
+CarDiaryApp.iml
+app/app.iml
+app/build/
+gradle/
+gradlew
+gradlew.bat
+local.properties
