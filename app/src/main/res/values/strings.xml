@@ -1,0 +1,22 @@
+<resources>
+
+    <string name="app_name">InCarApp</string>
+    
+    <string name="latitude">위도</string>
+    <string name="longitude">경도</string>
+    <string name="speed">속도</string>
+    <string name="bearing">방향</string>
+    <string name="accuracy">정확도</string>
+    <string name="altitude">고도</string>
+    <string name="gps_time">GPS시간</string>
+    <string name="record_count">레코드 수</string>
+    
+    <string name="start_log">기록 시작</string>
+    <string name="stop_log">기록 중지</string>
+    <string name="stop_service">서비스 종료</string>
+    <string name="add_fuel">주유기록 추가</string>
+    
+    <string name="show_info">정보 보이기</string>
+    <string name="hide_info">정보 숨기기</string>
+
+</resources>

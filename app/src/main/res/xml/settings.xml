@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <EditTextPreference
+        android:key="pref_interval_time"
+        android:title="위치 통지 간격 (초)"
+        android:defaultValue="0"
+        android:numeric="decimal"
+        android:selectAllOnFocus="true"
+    />
+    
+    <EditTextPreference
+        android:key="pref_interval_displacement"
+        android:title="위치 통지 거리 (m)"
+        android:defaultValue="0"
+        android:numeric="decimal"
+        android:selectAllOnFocus="true"
+    />
+    
+    <EditTextPreference
+        android:key="pref_trigger_speed"
+        android:title="기록 시작 속도(km/h)"
+        android:defaultValue="20"
+        android:numeric="decimal"
+        android:selectAllOnFocus="true"
+    />
+    
+    <EditTextPreference
+        android:key="pref_valid_accuracy"
+        android:title="유효 정확도"
+        android:defaultValue="50"
+        android:numeric="decimal"
+        android:selectAllOnFocus="true"
+    />
+    
+    <EditTextPreference
+        android:key="pref_vin"
+        android:title="차대번호"
+        android:selectAllOnFocus="true"
+    />
+    
+    <EditTextPreference
+        android:key="pref_interval_upload"
+        android:title="서버 업로드 주기(분)"
+        android:defaultValue="30"
+        android:numeric="decimal"
+        android:selectAllOnFocus="true"
+    />
+    
+    <Preference
+        android:key="pref_upload_now"
+        android:title="서버 업로드 요청"
+    />
+    
+    <Preference
+        android:key="pref_server_host"
+        android:title="업로드 서버"
+    />
+    
+    
+    
+    
+
+</PreferenceScreen>
