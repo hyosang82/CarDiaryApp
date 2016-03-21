@@ -10,6 +10,9 @@ import net.daum.mf.map.api.CameraUpdateFactory;
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapPolyline;
 import net.daum.mf.map.api.MapView;
+
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -21,6 +24,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -141,24 +145,24 @@ public class MainActivity extends BaseActivity {
 		btnStopService.setOnClickListener(mStopButton);
 		
 		btnHideInfo.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(llInfoArea.getVisibility() == View.VISIBLE) {
-                    llInfoArea.setVisibility(View.GONE);
-                    btnHideInfo.setText(R.string.show_info);
-                }else {
-                    llInfoArea.setVisibility(View.VISIBLE);
-                    btnHideInfo.setText(R.string.hide_info);
-                }
-            }
+			@Override
+			public void onClick(View v) {
+				if (llInfoArea.getVisibility() == View.VISIBLE) {
+					llInfoArea.setVisibility(View.GONE);
+					btnHideInfo.setText(R.string.show_info);
+				} else {
+					llInfoArea.setVisibility(View.VISIBLE);
+					btnHideInfo.setText(R.string.hide_info);
+				}
+			}
 		});
 		
 		chkTracking.setChecked(bTrackingMap);
 		chkTracking.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                bTrackingMap = isChecked;
-            }
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				bTrackingMap = isChecked;
+			}
 		});
 		
 		initMap();

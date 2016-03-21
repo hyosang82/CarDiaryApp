@@ -327,6 +327,10 @@ public class DbHelper extends SQLiteOpenHelper implements BaseUtil {
 		}
 	}
 
+	public void release() {
+        close();
+    }
+
 	@Override
 	public String getTag() {
 		return "DbHelper";
