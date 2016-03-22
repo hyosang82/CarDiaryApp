@@ -146,9 +146,20 @@ public class GpsService extends Service implements BaseUtil {
 	
 	public void startLog() {
 		log("start log..");
-		
-		mTrackTimestamp = mTrackTimeKey = System.currentTimeMillis();
-		mTrackSeq = (int)mDb.insertNewTrack("New Track", mTrackTimestamp);
+
+		//최종 로그 저장 후 일정시간 미 경과시 이어서 저장
+        long lastTime = mDb.getLastInsertedLogTime();
+        int contTime = SettingActivity.sContinueLogTime * 60 * 1000;
+        mTrackTimestamp = mTrackTimeKey = mTrackSeq = 0;
+        if((System.currentTimeMillis() - lastTime) < contTime) {
+            mTrackTimestamp = mTrackTimeKey = mDb.getLastTimeKey();
+            mTrackSeq = mDb.getLastestSeq();
+        }
+
+        if((mTrackSeq == 0) || (mTrackTimeKey == 0)){
+            mTrackTimestamp = mTrackTimeKey = System.currentTimeMillis();
+            mTrackSeq = (int) mDb.insertNewTrack("New Track", mTrackTimestamp);
+        }
 		
 		bZeroLogged = false;
 		

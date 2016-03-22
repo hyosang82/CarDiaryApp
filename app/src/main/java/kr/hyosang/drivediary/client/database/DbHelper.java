@@ -186,6 +186,54 @@ public class DbHelper extends SQLiteOpenHelper implements BaseUtil {
 			db.close();
 		}
 	}
+
+	public long getLastInsertedLogTime() {
+		long lasttime = 0;
+		synchronized(mLock) {
+			String query = "SELECT MAX(" + COL_TIME + ") FROM " + TABLE_LOG;
+			SQLiteDatabase db = getReadableDatabase();
+			Cursor c = db.rawQuery(query, null);
+			if(c.moveToNext()) {
+				lasttime = c.getLong(0);
+			}
+
+			db.releaseReference();
+		}
+
+		return lasttime;
+	}
+
+    public int getLastestSeq() {
+        int seq = 0;
+        synchronized(mLock) {
+            String query = "SELECT MAX(" + COL_SEQ + ") FROM " + TABLE_TRACK;
+            SQLiteDatabase db = getReadableDatabase();
+            Cursor c = db.rawQuery(query, null);
+            if (c.moveToNext()) {
+                seq = c.getInt(0);
+            }
+
+            db.releaseReference();
+        }
+
+        return seq;
+    }
+
+    public long getLastTimeKey() {
+        long lasttime = 0;
+        synchronized(mLock) {
+            String query = "SELECT MAX(" + COL_TKEY + ") FROM " + TABLE_TRACK;
+            SQLiteDatabase db = getReadableDatabase();
+            Cursor c = db.rawQuery(query, null);
+            if(c.moveToNext()) {
+                lasttime = c.getLong(0);
+            }
+
+            db.releaseReference();
+        }
+
+        return lasttime;
+    }
 	
 	public long getRecordCount(long tkey) {
 		synchronized(mLock) {
