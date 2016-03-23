@@ -16,8 +16,10 @@ public class Definition {
 	
 	public static final String SERVER_ROOT_LOCAL = "http://192.168.123.1:8888";
 	public static final String SERVER_ROOT_REAL = "http://car-diary.appspot.com"; 
-	public static final String UPLOAD_LOG = "/UploadLog";
-	public static final String UPLOAD_FUEL = "/SaveFuelLog";
+	//public static final String UPLOAD_LOG = "/UploadLog";			//v1
+	//public static final String UPLOAD_FUEL = "/SaveFuelLog";		//v1
+	public static final String UPLOAD_FUEL = "/Fuel/AddRecord";		//v2
+	public static final String UPLOAD_LOG = "/DriveLog/UploadLog";	//v2
 	
 	public static String getServerHost() {
 		return (IS_LOCAL ? SERVER_ROOT_REAL : SERVER_ROOT_REAL);

@@ -50,8 +50,6 @@ public class UploadThread extends Thread {
         
         DbHelper mDb = new DbHelper(mContext);
         
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        
         //주유기록 먼저 업로드함
         while(true) {
             FuelRecord fuel = mDb.getUploadFuelRecord();
@@ -66,7 +64,7 @@ public class UploadThread extends Thread {
             uploadData.put("inputTotalPrice", String.valueOf(fuel.priceTotal));
             uploadData.put("inputVolume", String.valueOf(fuel.liter));
             uploadData.put("inputIsFull", fuel.isFull ? "Y" : "N");
-            uploadData.put("inputDate", sdf.format(fuel.timestamp));
+            uploadData.put("inputDate", String.valueOf(fuel.timestamp));
             uploadData.put("inputStation", fuel.location);
             
             int res = NetworkManager.getInstance().sendData(Definition.UPLOAD_FUEL, uploadData);
