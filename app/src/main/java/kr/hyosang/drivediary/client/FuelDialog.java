@@ -1,6 +1,6 @@
 package kr.hyosang.drivediary.client;
 
-import kr.hyosang.drivediary.client.android.R;
+import kr.hyosang.drivediary.client.R;
 import kr.hyosang.drivediary.client.database.DbHelper;
 import kr.hyosang.drivediary.client.network.UploadThread;
 import android.app.Dialog;

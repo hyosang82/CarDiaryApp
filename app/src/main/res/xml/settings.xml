@@ -68,6 +68,11 @@
         android:title="Build date"
         android:summary="@string/build_date"
     />
+
+    <Preference
+        android:key="pref_download_apk"
+        android:title="Download apk from GitHub"
+    />
     
     
     

@@ -1,7 +1,9 @@
 package kr.hyosang.drivediary.client;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.Preference;
@@ -11,7 +13,7 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import kr.hyosang.drivediary.client.android.R;
+import kr.hyosang.drivediary.client.R;
 
 public class SettingActivity extends PreferenceActivity implements BaseUtil {
 	private static final String KEY_INT_TIME = "pref_interval_time";
@@ -23,6 +25,7 @@ public class SettingActivity extends PreferenceActivity implements BaseUtil {
 	private static final String KEY_INT_UPLD = "pref_interval_upload";
 	private static final String KEY_UPLD_NOW = "pref_upload_now";
 	private static final String KEY_SERV_HOST = "pref_server_host";
+	private static final String KEY_DOWNLOAD = "pref_download_apk";
 	
 	public static int sIntervalTime = 5;
 	public static int sIntervalDist = 0;
@@ -51,15 +54,23 @@ public class SettingActivity extends PreferenceActivity implements BaseUtil {
 			public boolean onPreferenceClick(Preference pref) {
 				try {
 					MainActivity.mService.requestUpload();
-				}catch(Exception e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				
+
 				return false;
 			}
-			
+
 		});
-		
+		findPreference(KEY_DOWNLOAD).setOnPreferenceClickListener(new OnPreferenceClickListener() {
+			@Override
+			public boolean onPreferenceClick(Preference preference) {
+				Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("https://raw.githubusercontent.com/hyosang82/CarDiaryApp/master/bin/CarDiaryApp.apk"));
+				startActivity(i);
+				return false;
+			}
+		});
+
 		loadPreferences(this);
 		updateSummary();
 	}

@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="kr.hyosang.drivediary.client.android"
+    package="kr.hyosang.drivediary.client"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -19,13 +19,13 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/noun_72"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
         android:debuggable="true">
         <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
         
-        <activity android:name="kr.hyosang.drivediary.client.MainActivity" android:label="@string/app_name">
+        <activity android:name="kr.hyosang.drivediary.client.MainActivity" android:label="@string/app_name" android:launchMode="singleTop">
             <intent-filter>
                  <action android:name="android.intent.action.MAIN" />
                  <category android:name="android.intent.category.LAUNCHER" /> 
@@ -33,11 +33,10 @@
         </activity>
         <activity android:name="kr.hyosang.drivediary.client.SettingActivity" />
         <service android:name="kr.hyosang.drivediary.client.service.GpsService" />
-        <service android:name="kr.hyosang.drivediary.client.service.FuelUploadService" />
         <receiver android:name="kr.hyosang.drivediary.client.BootReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
+            <action android:name="android.intent.action.BOOT_COMPLETED" />
+        </intent-filter>
         </receiver>
     </application>
 

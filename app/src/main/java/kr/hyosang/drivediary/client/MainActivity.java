@@ -3,7 +3,7 @@ package kr.hyosang.drivediary.client;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import kr.hyosang.drivediary.client.android.R;
+import kr.hyosang.drivediary.client.R;
 import kr.hyosang.drivediary.client.service.GpsService;
 import kr.hyosang.drivediary.client.service.IGpsService;
 import net.daum.mf.map.api.CameraUpdateFactory;

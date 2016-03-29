@@ -1,6 +1,6 @@
 <resources>
 
-    <string name="app_name">InCarApp</string>
+    <string name="app_name">CarDiary</string>
     
     <string name="latitude">위도</string>
     <string name="longitude">경도</string>

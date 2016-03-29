@@ -3,7 +3,7 @@ package kr.hyosang.drivediary.client.service;
 import kr.hyosang.drivediary.client.BaseUtil;
 import kr.hyosang.drivediary.client.Definition;
 import kr.hyosang.drivediary.client.MainActivity;
-import kr.hyosang.drivediary.client.android.R;
+import kr.hyosang.drivediary.client.R;
 import kr.hyosang.drivediary.client.SettingActivity;
 import kr.hyosang.drivediary.client.database.DbHelper;
 import kr.hyosang.drivediary.client.network.UploadThread;
@@ -271,28 +271,28 @@ public class GpsService extends Service implements BaseUtil {
 	}
 	
 	private void updateNotification(NotificationType type, String customContent) {
-	    int icon = R.drawable.ic_launcher;
+	    int icon = R.drawable.noun_72;
 	    String title = "DriveDiary Service";
 	    String content = "...";
 	    
 	    switch(type) {
 	    case SERVICE_STARTED:
-	        icon = R.drawable.ic_launcher;
+	        icon = R.drawable.noun_72;
 	        content = "Service Started";
 	        break;
 	        
 	    case GPS_SEARCHING:
-	        icon = android.R.drawable.ic_menu_zoom;
+	        icon = R.drawable.noun_72;
 	        content = "Searching GPS...";
 	        break;
 	        
 	    case GPS_RECEIVED:
-	        icon = android.R.drawable.ic_dialog_map;
+	        icon = R.drawable.noun_72;
 	        content = "Tracking GPS...";
 	        break;
 	        
 	    case DATA_UPLOADING:
-	        icon = android.R.drawable.ic_menu_upload;
+	        icon = R.drawable.noun_72;
 	        content = "Uploading data...";
 	        break;
 	    }
