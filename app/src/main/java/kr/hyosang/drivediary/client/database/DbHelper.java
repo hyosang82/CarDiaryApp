@@ -222,7 +222,7 @@ public class DbHelper extends SQLiteOpenHelper implements BaseUtil {
     public long getLastTimeKey() {
         long lasttime = 0;
         synchronized(mLock) {
-            String query = "SELECT MAX(" + COL_TKEY + ") FROM " + TABLE_TRACK;
+            String query = "SELECT MAX(" + COL_TIME + ") FROM " + TABLE_TRACK;
             SQLiteDatabase db = getReadableDatabase();
             Cursor c = db.rawQuery(query, null);
             if(c.moveToNext()) {
