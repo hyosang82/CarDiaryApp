@@ -28,7 +28,7 @@ public class SettingActivity extends PreferenceActivity implements BaseUtil {
 	private static final String KEY_DOWNLOAD = "pref_download_apk";
 	
 	public static int sIntervalTime = 5;
-	public static int sIntervalDist = 0;
+	public static int sIntervalDist = 10;
 	public static int sTriggerSpeed = 20;
 	public static float sValidAccuracy = 100.0f;
 	public static String sVin = "TESTVIN";
