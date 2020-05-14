@@ -200,7 +200,12 @@ public class MainActivity extends BaseActivity {
 
 	private boolean requestPermission() {
 		if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-			ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+			ActivityCompat.requestPermissions(this,
+					new String[]{
+							Manifest.permission.ACCESS_FINE_LOCATION,
+							Manifest.permission.WRITE_EXTERNAL_STORAGE
+					},
+					1);
 			return false;
 		}else {
 			return true;

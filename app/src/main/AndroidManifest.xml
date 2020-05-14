@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
         <activity android:name="kr.hyosang.drivediary.client.SettingActivity" />
-        <service android:name="kr.hyosang.drivediary.client.service.GpsService" />
+        <service android:name="kr.hyosang.drivediary.client.service.GpsService" android:process=".service" />
         <receiver android:name="kr.hyosang.drivediary.client.BootReceiver">
             <intent-filter>
             <action android:name="android.intent.action.BOOT_COMPLETED" />

@@ -16,7 +16,6 @@ public class BootReceiver extends BroadcastReceiver {
             }else {
                 context.startService(new Intent(context, GpsService.class));
             }
-
         }
     }
 
