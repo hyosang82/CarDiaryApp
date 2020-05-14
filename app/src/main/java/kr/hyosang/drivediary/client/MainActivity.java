@@ -11,13 +11,16 @@ import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapPolyline;
 import net.daum.mf.map.api.MapView;
 
+import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -38,6 +41,9 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 
 public class MainActivity extends BaseActivity {
 	public static IGpsService mService = null;
@@ -166,28 +172,53 @@ public class MainActivity extends BaseActivity {
 		});
 		
 		initMap();
-		
+
+		/*
 		mTrackline = new MapPolyline();
 		mTrackline.setLineColor(Color.argb(0xff, 0xee, 0x00, 0x00));
 		mMapView.addPolyline(mTrackline);
 		
 		mMapView.moveCamera(CameraUpdateFactory.newMapPoint(MapPoint.mapPointWithGeoCoord(38.22354, 127.40204)));
-		
-		Intent i = new Intent();
-		i.setClass(MainActivity.this, GpsService.class);
-		
-		boolean res = getApplicationContext().bindService(i, mServiceConn, BIND_AUTO_CREATE);
+
+		 */
+
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			if (requestPermission()) {
+				startService();
+			}
+		}else {
+			startService();
+		}
 		
 		log("App started");
 	}
 	
 	private void initMap() {
+		/*
 	    mMapView = new MapView(this);
 	    mMapView.setDaumMapApiKey(Definition.DAUM_API_KEY);
-	    
+
+
 	    ViewGroup container = (ViewGroup) findViewById(R.id.map_layout);
 	    container.addView(mMapView);
-	    
+		 */
+
+	}
+
+	private boolean requestPermission() {
+		if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+			ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+			return false;
+		}else {
+			return true;
+		}
+	}
+
+	private void startService() {
+		Intent i = new Intent();
+		i.setClass(MainActivity.this, GpsService.class);
+
+		boolean res = getApplicationContext().bindService(i, mServiceConn, BIND_AUTO_CREATE);
 	}
 	
 	private void setButton() {
@@ -199,7 +230,14 @@ public class MainActivity extends BaseActivity {
 			llNotLogging.setVisibility(View.VISIBLE);
 		}
 	}
-	
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+		if(requestCode == 1) {
+			startService();
+		}
+	}
+
 	private OnClickListener mStopButton = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
