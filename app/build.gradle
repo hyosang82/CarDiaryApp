@@ -1,6 +1,8 @@
 import java.text.SimpleDateFormat
 
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 buildscript {
     ext {
@@ -9,59 +11,64 @@ buildscript {
 }
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    compileSdkVersion 29
+    buildToolsVersion "29.0.2"
 
     defaultConfig {
         applicationId "kr.hyosang.app.drivediary"
-        minSdkVersion 10
-        targetSdkVersion 23
+        minSdkVersion 21
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
         resValue "string", "build_date", today
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
     buildTypes {
         release {
-//            buildConfigField "String", "BUILD_VER", "\"v.160329\""
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }
 
-
-preBuild << {
-    tasks.each { task ->
-        def m = task.name =~ /assemble(.*Debug)/
-        if(m.matches()) {
-            task.doLast({
-                println "Copying apk to bin directory ${m.group(1)}"
-                android.applicationVariants.all { variant ->
-                    if (variant.name.compareToIgnoreCase(m.group(1)) == 0) {
-                        println  "Copy ${variant.outputs[0].outputFile}"
-                        copy {
-                            from variant.outputs[0].outputFile
-                            into (this.rootDir.getAbsolutePath() + "/bin")
-                            rename ("app-debug.apk", this.rootProject.name + ".apk")
+preBuild.doLast {
+        tasks.each { task ->
+            def m = task.name =~ /assemble(.*Debug)/
+            if (m.matches()) {
+                task.doLast({
+                    println "Copying apk to bin directory ${m.group(1)}"
+                    android.applicationVariants.all { variant ->
+                        if (variant.name.compareToIgnoreCase(m.group(1)) == 0) {
+                            println "Copy ${variant.outputs[0].outputFile}"
+                            copy {
+                                from variant.outputs[0].outputFile
+                                into(this.rootDir.getAbsolutePath() + "/bin")
+                                rename("app-debug.apk", this.rootProject.name + ".apk")
+                            }
                         }
                     }
-                }
-            })
+                })
+            }
         }
-    }
 }
-clean << {
-    File b = new File(rootDir.getAbsolutePath() + "/bin")
-    files { b.listFiles() }.each {
-        println "Delete ${it}"
-        delete(it)
-    }
+
+clean.doLast {
+        File b = new File(rootDir.getAbsolutePath() + "/bin")
+        files { b.listFiles() }.each {
+            println "Delete ${it}"
+            delete(it)
+        }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile files('libs/android-support-v4.jar')
-    compile files('libs/google-play-services.jar')
-    compile files('libs/libDaumMapAndroid.jar')
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.core:core-ktx:1.2.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }
