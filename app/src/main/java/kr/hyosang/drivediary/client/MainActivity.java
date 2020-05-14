@@ -173,14 +173,11 @@ public class MainActivity extends BaseActivity {
 		
 		initMap();
 
-		/*
 		mTrackline = new MapPolyline();
 		mTrackline.setLineColor(Color.argb(0xff, 0xee, 0x00, 0x00));
 		mMapView.addPolyline(mTrackline);
 		
 		mMapView.moveCamera(CameraUpdateFactory.newMapPoint(MapPoint.mapPointWithGeoCoord(38.22354, 127.40204)));
-
-		 */
 
 		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 			if (requestPermission()) {
@@ -194,14 +191,10 @@ public class MainActivity extends BaseActivity {
 	}
 	
 	private void initMap() {
-		/*
 	    mMapView = new MapView(this);
-	    mMapView.setDaumMapApiKey(Definition.DAUM_API_KEY);
-
 
 	    ViewGroup container = (ViewGroup) findViewById(R.id.map_layout);
 	    container.addView(mMapView);
-		 */
 
 	}
 
