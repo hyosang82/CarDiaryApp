@@ -361,7 +361,11 @@ public class MainActivity extends BaseActivity {
 			//지속적으로 켬
 			Intent i = new Intent(MainActivity.this, GpsService.class);
 			i.putExtra(Definition.EXTRA_MESSENGER, mServiceListener);
-			startService(i);
+			if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+				startForegroundService(i);
+			}else {
+				startService(i);
+			}
 		}
 
 		@Override
