@@ -1,6 +1,7 @@
 package kr.hyosang.drivediary.client.service;
 
 import kr.hyosang.drivediary.client.BaseUtil;
+import kr.hyosang.drivediary.client.BuildConfig;
 import kr.hyosang.drivediary.client.Definition;
 import kr.hyosang.drivediary.client.MainActivity;
 import kr.hyosang.drivediary.client.R;
@@ -8,6 +9,7 @@ import kr.hyosang.drivediary.client.SettingActivity;
 import kr.hyosang.drivediary.client.database.DbHelper;
 import kr.hyosang.drivediary.client.network.UploadThread;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -21,6 +23,7 @@ import android.location.LocationProvider;
 import android.net.NetworkInfo;
 import android.net.NetworkInfo.State;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Message;
@@ -82,9 +85,9 @@ public class GpsService extends Service implements BaseUtil {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		
+
 		log("onCreate");
-		
+
 		SettingActivity.loadPreferences(this);
 		
 		IntentFilter filter = new IntentFilter(Intent.ACTION_TIME_TICK);
@@ -101,7 +104,7 @@ public class GpsService extends Service implements BaseUtil {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		log("onStartCommand");
-		
+
 		if(intent != null && intent.getExtras() != null) {
 			Object obj = intent.getExtras().get(Definition.EXTRA_MESSENGER);
 			if(obj != null && obj instanceof Messenger) {
@@ -302,14 +305,26 @@ public class GpsService extends Service implements BaseUtil {
 	    }
 	        
 	    PendingIntent intent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
-	     
-	    Notification noti = (new Notification.Builder(this))
+
+	    Notification.Builder builder;
+	    Notification noti;
+	    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+	    	NotificationChannel channel = new NotificationChannel("CarDiaryNotiChannel", "CarDiary", NotificationManager.IMPORTANCE_DEFAULT);
+	    	mNotiManager.createNotificationChannel(channel);
+
+	    	builder = new Notification.Builder(this, "CarDiaryNotiChannel");
+		}else {
+	    	builder = new Notification.Builder(this);
+		}
+
+	    noti = builder
                 .setSmallIcon(icon)
                 .setContentTitle(title)
                 .setContentText(content)
                 .setContentIntent(intent)
-                .getNotification();
-        mNotiManager.notify(1, noti);
+				.build();
+
+	    startForeground(1, noti);
 	}
 	
 	private android.location.LocationListener mLocationListener2 = new android.location.LocationListener() {
