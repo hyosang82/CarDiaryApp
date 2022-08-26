@@ -17,6 +17,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.PixelFormat;
 import android.location.Location;
 import android.location.LocationManager;
 import android.location.LocationProvider;
@@ -25,11 +26,20 @@ import android.net.NetworkInfo.State;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.ImageView;
+
+import androidx.core.content.res.ResourcesCompat;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
@@ -46,6 +56,8 @@ public class GpsService extends Service implements BaseUtil {
 	private Messenger mViewListener;
 	private boolean mIsLogging = false;
 	private DbHelper mDb = null;
+
+	private WindowManager windowManager;
 	
 	private long mTrackTimestamp = 0;
 	private int mTrackSeq = 0;
@@ -55,6 +67,8 @@ public class GpsService extends Service implements BaseUtil {
 	private int mUploadTick = 0;
 	private long mLastLoggedTime = 0;
 	private Location mLastLocation = null;
+
+	private ImageView ivOverlayIcon = null;
 	
 	NotificationManager mNotiManager;
 	
@@ -86,6 +100,8 @@ public class GpsService extends Service implements BaseUtil {
 	public void onCreate() {
 		super.onCreate();
 
+		windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+
 		log("onCreate");
 
 		SettingActivity.loadPreferences(this);
@@ -97,6 +113,8 @@ public class GpsService extends Service implements BaseUtil {
 		mNotiManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		
 		updateNotification(NotificationType.SERVICE_STARTED);
+
+		showOverlay();
 		
 		log("Service started");
 	}
@@ -145,6 +163,29 @@ public class GpsService extends Service implements BaseUtil {
 		mNotiManager.cancelAll();
 		
 		log("onDestroy");
+	}
+
+	private void showOverlay() {
+		int layoutFlag;
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			layoutFlag = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+		}else {
+			layoutFlag = WindowManager.LayoutParams.TYPE_PHONE;
+		}
+
+		int size = (int)(40f * getResources().getDisplayMetrics().density);
+
+		WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
+				size, size, layoutFlag,
+				WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+				PixelFormat.TRANSLUCENT
+		);
+		lp.gravity = Gravity.RIGHT | Gravity.BOTTOM;
+		lp.alpha = 0.5f;
+
+		View view = LayoutInflater.from(this).inflate(R.layout.overlay_view, null);
+		ivOverlayIcon = (ImageView) view.findViewById(R.id.ic_overlay_status);
+		windowManager.addView(view, lp);
 	}
 	
 	public void startLog() {
@@ -277,26 +318,31 @@ public class GpsService extends Service implements BaseUtil {
 	    int icon = R.drawable.noun_72;
 	    String title = "DriveDiary Service";
 	    String content = "...";
+		int ovIcon = R.drawable.ic_x;
 	    
 	    switch(type) {
 	    case SERVICE_STARTED:
 	        icon = R.drawable.noun_72;
 	        content = "Service Started";
+			ovIcon = R.drawable.ic_x;
 	        break;
 	        
 	    case GPS_SEARCHING:
 	        icon = R.drawable.noun_72;
 	        content = "Searching GPS...";
+			ovIcon = R.drawable.ic_x;
 	        break;
 	        
 	    case GPS_RECEIVED:
 	        icon = R.drawable.noun_72;
 	        content = "Tracking GPS...";
+			ovIcon = R.drawable.ic_ok;
 	        break;
 	        
 	    case DATA_UPLOADING:
 	        icon = R.drawable.noun_72;
 	        content = "Uploading data...";
+			ovIcon = R.drawable.ic_upload;
 	        break;
 	    }
 	    
@@ -325,6 +371,14 @@ public class GpsService extends Service implements BaseUtil {
 				.build();
 
 	    startForeground(1, noti);
+
+		final int ovIconf = ovIcon;
+		(new Handler(Looper.getMainLooper())).post(new Runnable() {
+			@Override
+			public void run() {
+				ivOverlayIcon.setImageResource(ovIconf);
+			}
+		});
 	}
 	
 	private android.location.LocationListener mLocationListener2 = new android.location.LocationListener() {

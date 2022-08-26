@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-feature android:glEsVersion="0x00020000" android:required="true" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
         android:allowBackup="true"
@@ -30,7 +31,7 @@
             </intent-filter>
         </activity>
         <activity android:name="kr.hyosang.drivediary.client.SettingActivity" />
-        <service android:name="kr.hyosang.drivediary.client.service.GpsService" android:process=".service" />
+        <service android:name="kr.hyosang.drivediary.client.service.GpsService" android:process=".service" android:permission="android.permission.SYSTEM_ALERT_WINDOW"/>
         <receiver android:name="kr.hyosang.drivediary.client.BootReceiver">
             <intent-filter>
             <action android:name="android.intent.action.BOOT_COMPLETED" />

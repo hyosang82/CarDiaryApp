@@ -20,6 +20,7 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,6 +28,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -81,7 +83,7 @@ public class MainActivity extends BaseActivity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		
 		setContentView(R.layout.main);
-		
+
 		llNotLogging = (LinearLayout)findViewById(R.id.ll_notlogging);
 		llLogging = (LinearLayout)findViewById(R.id.ll_logging);
 		llInfoArea = (LinearLayout)findViewById(R.id.ll_info);
@@ -203,7 +205,8 @@ public class MainActivity extends BaseActivity {
 			ActivityCompat.requestPermissions(this,
 					new String[]{
 							Manifest.permission.ACCESS_FINE_LOCATION,
-							Manifest.permission.WRITE_EXTERNAL_STORAGE
+							Manifest.permission.WRITE_EXTERNAL_STORAGE,
+							Manifest.permission.SYSTEM_ALERT_WINDOW
 					},
 					1);
 			return false;
@@ -213,6 +216,18 @@ public class MainActivity extends BaseActivity {
 	}
 
 	private void startService() {
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			log("Permission granted? => " + Settings.canDrawOverlays(this));
+
+			if(Settings.canDrawOverlays(this)) {
+				//ok
+			}else {
+				Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
+				startActivity(intent);
+				finish();
+			}
+		}
+
 		Intent i = new Intent();
 		i.setClass(MainActivity.this, GpsService.class);
 
