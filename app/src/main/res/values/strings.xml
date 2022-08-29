@@ -19,4 +19,9 @@
     <string name="show_info">정보 보이기</string>
     <string name="hide_info">정보 숨기기</string>
 
+    <string name="service_started">서비스 시작</string>
+    <string name="searching_gps">GPS 대기 중</string>
+    <string name="receiving_gps">GPS 수신 중</string>
+    <string name="recording_gps">경로 기록 중</string>
+
 </resources>

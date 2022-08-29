@@ -38,6 +38,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.core.content.res.ResourcesCompat;
 
@@ -68,9 +69,20 @@ public class GpsService extends Service implements BaseUtil {
 	private long mLastLoggedTime = 0;
 	private Location mLastLocation = null;
 
+	private View vOverlay = null;
 	private ImageView ivOverlayIcon = null;
-	
+	private TextView txtStatus;
+	private TextView txtLati;
+	private TextView txtLongi;
+
+	private int overlayIcon = R.drawable.ic_x;
+	private String statusText = "";
+	private String latitude = "";
+	private String longitude = "";
+
 	NotificationManager mNotiManager;
+
+	WindowManager.LayoutParams overlayLp;
 	
 	private int mStopTickTimer = 30;	//30min
 	
@@ -104,6 +116,8 @@ public class GpsService extends Service implements BaseUtil {
 
 		log("onCreate");
 
+		statusText = getString(R.string.service_started);
+
 		SettingActivity.loadPreferences(this);
 		
 		IntentFilter filter = new IntentFilter(Intent.ACTION_TIME_TICK);
@@ -113,6 +127,21 @@ public class GpsService extends Service implements BaseUtil {
 		mNotiManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		
 		updateNotification(NotificationType.SERVICE_STARTED);
+
+		int layoutFlag;
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			layoutFlag = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+		}else {
+			layoutFlag = WindowManager.LayoutParams.TYPE_PHONE;
+		}
+
+		overlayLp = new WindowManager.LayoutParams(
+				WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT, layoutFlag,
+				WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+				PixelFormat.TRANSLUCENT
+		);
+		overlayLp.gravity = Gravity.RIGHT | Gravity.BOTTOM;
+		overlayLp.alpha = 0.5f;
 
 		showOverlay();
 		
@@ -166,26 +195,30 @@ public class GpsService extends Service implements BaseUtil {
 	}
 
 	private void showOverlay() {
-		int layoutFlag;
-		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-			layoutFlag = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
-		}else {
-			layoutFlag = WindowManager.LayoutParams.TYPE_PHONE;
+		if(vOverlay == null) {
+			vOverlay = LayoutInflater.from(this).inflate(R.layout.overlay_view, null);
+			ivOverlayIcon = (ImageView) vOverlay.findViewById(R.id.ic_overlay_status);
+			txtStatus = (TextView) vOverlay.findViewById(R.id.txtStatus);
+			txtLati = (TextView) vOverlay.findViewById(R.id.txtLatitude);
+			txtLongi = (TextView) vOverlay.findViewById(R.id.txtLongitude);
 		}
 
-		int size = (int)(40f * getResources().getDisplayMetrics().density);
+		windowManager.addView(vOverlay, overlayLp);
+	}
 
-		WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
-				size, size, layoutFlag,
-				WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
-				PixelFormat.TRANSLUCENT
-		);
-		lp.gravity = Gravity.RIGHT | Gravity.BOTTOM;
-		lp.alpha = 0.5f;
+	private void updateOverlay() {
+		(new Handler()).post(new Runnable() {
+			@Override
+			public void run() {
+				ivOverlayIcon.setImageResource(overlayIcon);
+				txtStatus.setText(statusText);
+				txtLati.setText(latitude);
+				txtLongi.setText(longitude);
 
-		View view = LayoutInflater.from(this).inflate(R.layout.overlay_view, null);
-		ivOverlayIcon = (ImageView) view.findViewById(R.id.ic_overlay_status);
-		windowManager.addView(view, lp);
+				windowManager.updateViewLayout(vOverlay, overlayLp);
+
+			}
+		});
 	}
 	
 	public void startLog() {
@@ -208,6 +241,10 @@ public class GpsService extends Service implements BaseUtil {
 		bZeroLogged = false;
 		
 		setLogging(true);
+
+		statusText = getString(R.string.recording_gps);
+		overlayIcon = R.drawable.ic_record;
+		updateOverlay();
 	}
 	
 	public void stopLog() {
@@ -218,8 +255,13 @@ public class GpsService extends Service implements BaseUtil {
 		mDb.insertLocation(mTrackSeq, mTrackTimeKey, loc);
 		
 		mLastLoggedTime = System.currentTimeMillis();
+
+		latitude = String.format("%.6f", loc.getLatitude());
+		longitude = String.format("%.6f", loc.getLongitude());
+
+		updateOverlay();
 	}
-	
+
 	private synchronized void setLogging(boolean bLog) {
 		mIsLogging = bLog;
 		
@@ -282,7 +324,11 @@ public class GpsService extends Service implements BaseUtil {
 			log("LocationService Connected");
 			
 			updateNotification(NotificationType.GPS_RECEIVED);
-			
+
+			statusText = getString(R.string.receiving_gps);
+			overlayIcon = R.drawable.ic_ok;
+			updateOverlay();
+
 			//최종 위치 send.
 			Location lastLoc = mLocationClient.getLastLocation();
 			sendMessage(Definition.Event.LAST_LOCATION, lastLoc);
@@ -298,6 +344,10 @@ public class GpsService extends Service implements BaseUtil {
 		@Override
 		public void onDisconnected() {
 			log("LocationService Disconnected");
+
+			statusText = getString(R.string.searching_gps);
+			overlayIcon = R.drawable.ic_x;
+			updateOverlay();
 		}
 	};
 	
@@ -318,31 +368,26 @@ public class GpsService extends Service implements BaseUtil {
 	    int icon = R.drawable.noun_72;
 	    String title = "DriveDiary Service";
 	    String content = "...";
-		int ovIcon = R.drawable.ic_x;
-	    
+
 	    switch(type) {
 	    case SERVICE_STARTED:
 	        icon = R.drawable.noun_72;
 	        content = "Service Started";
-			ovIcon = R.drawable.ic_x;
 	        break;
 	        
 	    case GPS_SEARCHING:
 	        icon = R.drawable.noun_72;
 	        content = "Searching GPS...";
-			ovIcon = R.drawable.ic_x;
 	        break;
 	        
 	    case GPS_RECEIVED:
 	        icon = R.drawable.noun_72;
 	        content = "Tracking GPS...";
-			ovIcon = R.drawable.ic_ok;
 	        break;
 	        
 	    case DATA_UPLOADING:
 	        icon = R.drawable.noun_72;
 	        content = "Uploading data...";
-			ovIcon = R.drawable.ic_upload;
 	        break;
 	    }
 	    
@@ -371,14 +416,6 @@ public class GpsService extends Service implements BaseUtil {
 				.build();
 
 	    startForeground(1, noti);
-
-		final int ovIconf = ovIcon;
-		(new Handler(Looper.getMainLooper())).post(new Runnable() {
-			@Override
-			public void run() {
-				ivOverlayIcon.setImageResource(ovIconf);
-			}
-		});
 	}
 	
 	private android.location.LocationListener mLocationListener2 = new android.location.LocationListener() {
@@ -421,7 +458,11 @@ public class GpsService extends Service implements BaseUtil {
             }
             
             mLastLocation = location;
-            sendMessage(Definition.Event.LOCATION_UPDATED, location);            
+            sendMessage(Definition.Event.LOCATION_UPDATED, location);
+
+			longitude = String.format("%.6f", mLastLocation.getLongitude());
+			latitude = String.format("%.6f", mLastLocation.getLatitude());
+			updateOverlay();
         }
 
         @Override
