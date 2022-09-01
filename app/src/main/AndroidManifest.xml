@@ -2,6 +2,7 @@
     package="kr.hyosang.drivediary.client">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -31,7 +32,7 @@
             </intent-filter>
         </activity>
         <activity android:name="kr.hyosang.drivediary.client.SettingActivity" />
-        <service android:name="kr.hyosang.drivediary.client.service.GpsService" android:process=".service" android:permission="android.permission.SYSTEM_ALERT_WINDOW"/>
+        <service android:name="kr.hyosang.drivediary.client.service.GpsService" android:permission="android.permission.SYSTEM_ALERT_WINDOW" android:foregroundServiceType="location" />
         <receiver android:name="kr.hyosang.drivediary.client.BootReceiver">
             <intent-filter>
             <action android:name="android.intent.action.BOOT_COMPLETED" />
