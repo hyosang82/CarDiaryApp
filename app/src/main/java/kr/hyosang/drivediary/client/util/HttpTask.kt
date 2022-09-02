@@ -19,18 +19,30 @@ class HttpTask(val url: String, val method: String) {
 
     var formData = HashMap<String, Object>()
     var rawBody: ByteArray? = null
+    var headers = HashMap<String, String>()
 
     var responseCode: Int = -1
     var responseMessage: String? = null
     var responseBody: String? = null
 
-    fun execute(callback: (task: HttpTask) -> Unit) {
+    fun execute(callback: ((task: HttpTask) -> Unit)?) {
         CoroutineScope(IO).async {
             _execute(callback)
         }
     }
 
-    private suspend fun _execute(callback: (task: HttpTask) -> Unit) {
+    fun executeSync() {
+        runBlocking {
+            _execute(null)
+        }
+    }
+
+    fun setBody(data: ByteArray, contentType: String) {
+        rawBody = data
+        headers.put("Content-Type", contentType)
+    }
+
+    private suspend fun _execute(callback: ((task: HttpTask) -> Unit)?) {
         val conn = URL(url).openConnection() as HttpURLConnection
         val reqBody = getRequestBody()
         val bOutput = (reqBody != null)
@@ -40,10 +52,13 @@ class HttpTask(val url: String, val method: String) {
         conn.doInput = true
         conn.doOutput = bOutput
         conn.requestMethod = method
+        headers.entries.forEach { e -> conn.addRequestProperty(e.key, e.value) }
+
 
         if(bOutput) {
             conn.outputStream.write(reqBody!!)
         }
+
 
         this.responseCode = conn.responseCode
         this.responseMessage = conn.responseMessage
@@ -73,7 +88,7 @@ class HttpTask(val url: String, val method: String) {
 
         //done
         withContext(Main) {
-            callback.invoke(this@HttpTask)
+            callback?.invoke(this@HttpTask)
         }
     }
 

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.TimeZone;
 
 import kr.hyosang.drivediary.client.BaseUtil;
+import kr.hyosang.drivediary.client.util.SharedPref;
+
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
@@ -329,6 +331,14 @@ public class DbHelper extends SQLiteOpenHelper implements BaseUtil {
 						c.getString(iTime))
 				);
 				sb.append("$");
+
+				LogDataSet.Item item = new LogDataSet.Item();
+				item.latitude = c.getDouble(iLat);
+				item.longitude = c.getDouble(iLng);
+				item.altitude = c.getFloat(iAlt);
+				item.speed = c.getFloat(iSpd);
+				item.time = c.getLong(iTime);
+				dataset.logs.add(item);
 			
 				dataset.timeKey = tkey;
 				dataset.keyList.add(seq);
@@ -339,16 +349,15 @@ public class DbHelper extends SQLiteOpenHelper implements BaseUtil {
 			}
 			
 			dataset.logData = sb.toString();
+			dataset.uuid = SharedPref.Companion.getInstance().getVehicleUuid();
 			
 			c.close();
 			db.releaseReference();
 			
 			return dataset;
 		}
-		
 	}
-	
-	
+
 	@SuppressLint("SimpleDateFormat")
 	public void selectAll() {
 		synchronized(mLock) {
