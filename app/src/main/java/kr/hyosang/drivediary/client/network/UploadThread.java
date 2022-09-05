@@ -57,7 +57,8 @@ public class UploadThread extends Thread {
         }
         
         DbHelper mDb = new DbHelper(mContext);
-        
+
+        /*
         //주유기록 먼저 업로드함
         while(true) {
             FuelRecord fuel = mDb.getUploadFuelRecord();
@@ -87,6 +88,7 @@ public class UploadThread extends Thread {
                 break;
             }
         }
+         */
         
         
         //로그기록 업로드
@@ -119,7 +121,7 @@ public class UploadThread extends Thread {
                         uploadLog.put("logs", logs);
 
 
-                        HttpTask task = (new HttpTask("https://cardiaryspringserver-6w3qlgf3zq-uc.a.run.app/vehicle/log/" + dataset.uuid, "POST"));
+                        HttpTask task = (new HttpTask("https://cardiaryspringserver-6w3qlgf3zq-uc.a.run.app/vehicle/" + dataset.uuid + "/log", "POST"));
                         task.setBody(uploadLog.toString().getBytes(StandardCharsets.UTF_8), "application/json; charset=utf-8");
                         task.executeSync();
 
