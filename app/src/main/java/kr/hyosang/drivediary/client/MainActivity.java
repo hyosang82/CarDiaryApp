@@ -6,6 +6,8 @@ import java.util.Date;
 import kr.hyosang.drivediary.client.R;
 import kr.hyosang.drivediary.client.service.GpsService;
 import kr.hyosang.drivediary.client.service.IGpsService;
+import kr.hyosang.drivediary.client.util.SharedPref;
+
 import net.daum.mf.map.api.CameraUpdateFactory;
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapPolyline;
@@ -43,6 +45,7 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -105,7 +108,9 @@ public class MainActivity extends BaseActivity {
 		btnStopService = (Button)findViewById(R.id.btn_stopservice);
 		
 		chkTracking = (CheckBox)findViewById(R.id.chk_track_map);
-		
+
+		Toast.makeText(this, "UUID=" + SharedPref.getInstance().getVehicleUuid(), Toast.LENGTH_SHORT).show();
+
 		btnSetting.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

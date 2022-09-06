@@ -349,7 +349,7 @@ public class DbHelper extends SQLiteOpenHelper implements BaseUtil {
 			}
 			
 			dataset.logData = sb.toString();
-			dataset.uuid = SharedPref.Companion.getInstance().getVehicleUuid();
+			dataset.uuid = SharedPref.getInstance().getVehicleUuid();
 			
 			c.close();
 			db.releaseReference();

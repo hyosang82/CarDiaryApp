@@ -16,6 +16,7 @@ class SharedPref {
             inst = SharedPref(context)
         }
 
+        @JvmStatic
         fun getInstance(): SharedPref {
             return inst
         }
