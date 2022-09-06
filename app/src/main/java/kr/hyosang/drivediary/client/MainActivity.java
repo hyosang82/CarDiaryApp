@@ -1,5 +1,6 @@
 package kr.hyosang.drivediary.client;
 
+import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -19,7 +20,9 @@ import android.accounts.AccountManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
@@ -31,6 +34,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.provider.Settings;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -110,6 +114,8 @@ public class MainActivity extends BaseActivity {
 		chkTracking = (CheckBox)findViewById(R.id.chk_track_map);
 
 		Toast.makeText(this, "UUID=" + SharedPref.getInstance().getVehicleUuid(), Toast.LENGTH_SHORT).show();
+
+		checkAppHash();
 
 		btnSetting.setOnClickListener(new OnClickListener() {
             @Override
@@ -246,6 +252,23 @@ public class MainActivity extends BaseActivity {
 		}else {
 			llLogging.setVisibility(View.GONE);
 			llNotLogging.setVisibility(View.VISIBLE);
+		}
+	}
+
+	private void checkAppHash() {
+		PackageInfo packageInfo = null;
+		try {
+			packageInfo = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_SIGNATURES);
+			if(packageInfo != null) {
+				MessageDigest md = MessageDigest.getInstance("SHA");
+				for(Signature sig : packageInfo.signatures) {
+					md.reset();
+					md.update(sig.toByteArray());
+					Log.d("SigHash", "" + Base64.encodeToString(md.digest(), Base64.DEFAULT));
+				}
+			}
+		}catch(Exception e) {
+			Log.e("Signature", "Signature failed", e);
 		}
 	}
 
