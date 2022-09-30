@@ -303,6 +303,7 @@ public class GpsService extends Service implements BaseUtil {
     			}else if(mUploadTick > SettingActivity.sIntervalUpload) {
     				//업로드 처리
     				mUploadTick = mUploadTick % SettingActivity.sIntervalUpload;
+					(new UploadThread(GpsService.this)).start();
     			}
 		    }else if(WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(action)) {
                 NetworkInfo netInfo = (NetworkInfo) intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
